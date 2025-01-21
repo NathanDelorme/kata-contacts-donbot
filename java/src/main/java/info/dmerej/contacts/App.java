@@ -1,6 +1,5 @@
 package info.dmerej.contacts;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.stream.Stream;
