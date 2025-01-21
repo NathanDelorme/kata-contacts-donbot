@@ -27,7 +27,10 @@ public class Database {
                     name TEXT NOT NULL,
                     email TEXT NOT NULL
                     );
+                    """
+            );
 
+            statement.execute("""
                     CREATE UNIQUE INDEX index_contacts_email ON contacts(email);
                     """
             );
@@ -51,16 +54,12 @@ public class Database {
                 }
             });
             statement.clearParameters();
-            int[] counts = statement.executeBatch();
-            for (int count : counts) {
-                insertedCount += count;
-            }
+            statement.executeBatch();
             connection.commit();
             System.out.println("Inserted " + insertedCount + " contacts");
         } catch (SQLException e) {
             throw new RuntimeException("Error when inserting contacts to db: " + e.toString());
         }
-
     }
 
     public String getContactNameFromEmail(String email) {
