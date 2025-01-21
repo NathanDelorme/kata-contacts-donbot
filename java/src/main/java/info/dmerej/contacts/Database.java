@@ -37,20 +37,28 @@ public class Database {
 
     public void insertContacts(Stream<Contact> contacts) {
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO contacts (name, email) VALUES (?, ?)");
+            connection.setAutoCommit(false);
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO contacts(name, email) VALUES(?, ?)");
             contacts.forEach(contact -> {
                 try {
                     statement.setString(1, contact.name());
                     statement.setString(2, contact.email());
-                    statement.executeUpdate();
-                    insertedCount++;
+                    statement.addBatch();
                 } catch (SQLException e) {
-                    throw new RuntimeException("Could not insert contact: " + e.toString());
+                    throw new RuntimeException("Error when adding contact to batch: " + e.toString());
                 }
             });
+            statement.clearParameters();
+            int[] counts = statement.executeBatch();
+            for (int count : counts) {
+                insertedCount += count;
+            }
+            connection.commit();
+            System.out.println("Inserted " + insertedCount + " contacts");
         } catch (SQLException e) {
-            throw new RuntimeException("Could not prepare statement: " + e.toString());
+            throw new RuntimeException("Error when inserting contacts to db: " + e.toString());
         }
+
     }
 
     public String getContactNameFromEmail(String email) {

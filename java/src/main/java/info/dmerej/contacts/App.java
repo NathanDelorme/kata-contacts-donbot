@@ -12,12 +12,8 @@ public class App {
 
     public App() {
         File file = new File("contacts.sqlite3");
-        try {
-            if (file.exists())
-                file.delete();
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (file.exists()) {
+            file.delete();
         }
         database = new Database(file);
         database.migrate();
@@ -60,7 +56,7 @@ public class App {
         database.getContactNameFromEmail(email);
         long end = System.currentTimeMillis();
         long elapsed = end - start;
-        System.out.format("Query took %f seconds\n", elapsed / 1000.0);
+        System.out.println("Query took " + elapsed / 1000.0 + " seconds");
     }
 
     public void close() {
