@@ -2,6 +2,7 @@ package info.dmerej.contacts;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.util.stream.Stream;
 
 public class App {
@@ -11,12 +12,21 @@ public class App {
 
     public App() {
         File file = new File("contacts.sqlite3");
-        if (!file.exists()) {
+        try {
+            if (file.exists())
+                file.delete();
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        database = new Database(file);
+        database.migrate();
+        /*if (!file.exists()) {
             database = new Database(file);
             database.migrate();
         } else {
             database = new Database(file);
-        }
+        }*/
         contactsGenerator = new ContactsGenerator();
     }
 
@@ -45,7 +55,7 @@ public class App {
     }
 
     private void lookupContact(int count) {
-        String email = String.format("email-%d@tld", count);
+        String email = String.format("email-%d", count);
         long start = System.currentTimeMillis();
         database.getContactNameFromEmail(email);
         long end = System.currentTimeMillis();
