@@ -2,18 +2,16 @@ package info.dmerej.contacts;
 
 import java.util.Arrays;
 import java.util.UUID;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class ContactsGenerator {
     public Stream<Contact> generateContacts(int count) {
-        Contact[] contacts = new Contact[count];
-        for (int i = 0; i < count; i++) {
-            contacts[i] = generateContact(i);
-        }
-        return Arrays.stream(contacts);
+        return IntStream.range(0, count)
+                .mapToObj(this::generateContact);
     }
 
-    public static Contact generateContact(int count) {
+    public Contact generateContact(int count) {
         return new Contact(UUID.randomUUID().toString(), String.format("email-%d", count+1));
     }
 }
